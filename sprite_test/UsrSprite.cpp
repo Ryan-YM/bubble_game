@@ -5,7 +5,7 @@ CUsrSprite::CUsrSprite(int x, int y, int width, int height, int dx, int dy, ACL_
 {
 
 }
-CUsrSprite::CUsrSprite(CUsrSprite &sprite):SpriteBase(sprite)
+CUsrSprite::CUsrSprite(CUsrSprite &sprite):SpriteBase(sprite)	//拷贝构造函数
 {
 
 }
@@ -24,16 +24,22 @@ void CUsrSprite::move(int xx, int yy)
 }
 */
 
-void CUsrSprite::move(rect r1)
+void CUsrSprite::move(rect r1) //限定移动范围
 {
-	x = r1.x;
-	y = r1.y;
-	if (x < r.x)x = r.x;
-	if (x >(r.x + r.width - width))x = (r.x + r.width - width);
-	if (y < r.y)y = r.y;
-	if (y >(r.y + r.height - height))y = (r.y + r.height - height);
-
+	if (x < r1.x)x = r1.x;
+	if (x >(r1.x + r1.width - width))x = (r1.x + r1.width - width);
+	if (y < r1.y)y = r1.y;
+	if (y >(r1.y + r1.height - height))y = (r1.y + r1.height - height);
 }
+// {
+// 	x = r1.x;
+// 	y = r1.y;
+// 	if (x < r.x)x = r.x;
+// 	if (x >(r.x + r.width - width))x = (r.x + r.width - width);
+// 	if (y < r.y)y = r.y;
+// 	if (y >(r.y + r.height - height))y = (r.y + r.height - height);
+
+// }
 
 void CUsrSprite::move(int key)
 {
@@ -63,21 +69,35 @@ void CUsrSprite::move(int key)
 int CUsrSprite::collision(rect r2)
 {
 	rect r1 = { x,y, width, height };
-	int c = 1;
-	if (r1.x < r2.x && r1.x + r1.width >r2.x) {
-		if (r1.y > r2.y && r1.y<r2.y + r2.height)return c;
-		if (r1.y <r2.y && r1.y + r1.height >r2.y)return c;
-	}
-	else {
-		if (r1.x > r2.x && r2.x + r2.width > r1.x)
-		{
-			if (r1.y > r2.y && r1.y<r2.y + r2.height)return c;
-			if (r1.y <r2.y && r1.y + r1.height >r2.y)return c;
+	int c = 0;
+	if (r1.x < r2.x && r1.x + r1.width >r2.x){
+		if ((r1.y > r2.y && r1.y<r2.y + r2.height) || (r1.y <r2.y && r1.y + r1.height >r2.y)){
+			c = 1;
 		}
 	}
-	c = 0;
+	else {
+		if (r1.x > r2.x && r2.x + r2.width > r1.x){
+			if ((r1.y > r2.y && r1.y<r2.y + r2.height) || (r1.y <r2.y && r1.y + r1.height >r2.y)){
+				c = 1;
+			}
+		}
+	}
 	return c;
 }
+
+// TODO 使其呈现阶段变化
+void CUsrSprite::grow()
+{
+	if (score == 10){
+		width += 5;
+		height += 5;
+	}
+	if (score == 20){
+		width += 5;
+		height += 5;
+	}
+}
+
 int CUsrSprite::getScore()
 {
 	return score;

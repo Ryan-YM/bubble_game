@@ -35,11 +35,12 @@ int Setup()
 	loadImage("duck.jpg", &imgHeart);
 	//autosprite[nowNum++] = new CAutoSprite(x, y, autoWidth, autoHeight, dx, dy, &img, winRect);
 	createData(autosprite);
-	createData(&usr);
+	createData(&usr);	// TODO why &usr? instead of usr
 	registerTimerEvent(timerEvent);
 	registerKeyboardEvent(keyEvent);
-	startTimer(0, 40);
-	startTimer(1, 1000);
+	// TODO 把游戏设计位有限时间内的完成最多得分
+	startTimer(0, 40);	// 定时器的时间间隔
+	startTimer(1, 1000);	//
 	return 0;
 }
 
@@ -137,6 +138,7 @@ void keyEvent(int key, int event)
 				if (usr)usr->addScore(s);
 				delete(autosprite[i]);
 				autosprite[i] = NULL;
+				usr->grow();
 			}
 		}
 	}

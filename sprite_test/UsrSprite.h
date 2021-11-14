@@ -20,6 +20,7 @@ public:
 	int getScore();
 	void setScore(int s);
 	void addScore(int m);
+	void grow();
 };
 
 #endif
