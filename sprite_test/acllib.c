@@ -859,4 +859,3 @@ void hideCaret()
 	HideCaret(g_hWnd);
 }
 
-
