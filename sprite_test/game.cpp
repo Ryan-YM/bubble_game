@@ -2,8 +2,10 @@
 #include"AutoSprite.h"
 #include"UsrSprite.h"
 #include"AvoidSprite.h"
+#include"Sound.h"
 #include<time.h>
 #include<stdio.h>
+
 
 const int maxNum = 50;
 const int winWidth = 800, winHeight = 600;
@@ -18,7 +20,10 @@ void createData(CAutoSprite **autoSprite);
 void createData(CUsrSprite **usr);
 void keyEvent(int key, int event);
 void paint();
+// void printCountDownTime(int ID);
+
 int nowNum = 0;
+// int counter = 60;
 
 int Setup()
 {
@@ -28,44 +33,47 @@ int Setup()
 	winRect.height = winHeight;
 	initWindow("BUBBLE GAME", DEFAULT, DEFAULT, winWidth, winHeight);	//初始化窗口 BUBBLE GAME
 	srand((unsigned)time(NULL));	//初始化随机数
-	// TODO socre 分数如何在画面渲染的
 
 	loadImage("diamonds_Small.jpeg", &img);
 	loadImage("abstract-016_Small.jpeg", &imgUsr);
 	loadImage("duck.jpg", &imgHeart);
+	switchBGM(1);
 	//autosprite[nowNum++] = new CAutoSprite(x, y, autoWidth, autoHeight, dx, dy, &img, winRect);
 	createData(autosprite);
 	createData(&usr);	// TODO why &usr? instead of usr
+	usr->setScore(0);
 	registerTimerEvent(timerEvent);
+	// registerTimerEvent(printCountDownTime);
 	registerKeyboardEvent(keyEvent);
 	// TODO 把游戏设计位有限时间内的完成最多得分
 	startTimer(0, 40);	// 定时器的时间间隔
-	startTimer(1, 1000);	//
+	startTimer(1, 1000);
+
 	return 0;
 }
 
-void timerEvent(int id)
+void timerEvent(int id) //定时器事件, 0 让已有的Diamond自由移动，1 创建/补充新的Diamond
 {
 	int i = 0;
 	switch (id)
 	{
-	case 0:
-		for (i = 0; i < nowNum; ++i)
-			if (autosprite[i])
-			{
-				rect ur = usr->getRect();
-				autosprite[i]->move(ur);
-				
-			}
+		case 0:
+			for (i = 0; i < nowNum; ++i)
+				if (autosprite[i])
+				{
+					rect ur = usr->getRect();
+					autosprite[i]->move(ur);
+					
+				}
 
-		break;
-	case 1:
-		if (nowNum < maxNum)
-		{
-			createData(autosprite);
-		}
-		break;
-	}//end switch
+			break;
+		case 1:
+			if (nowNum < maxNum)
+			{
+				createData(autosprite);
+			}
+			break;
+	}
 	paint();
 }
 
@@ -79,9 +87,9 @@ void createData(CAutoSprite **autoSprite)
 	int dy = rand() % 5 + 1; //	随机生成y方向的速度
 	int t = rand() % 100;	//	随机生成类型
 	if(t<80)	// 80% 生成1分&img，20% 生成5分&imgHeart
-		autosprite[nowNum++] = new CAutoSprite(x, y, autoWidth, autoHeight, dx, dy, &img, winRect,1);
+		autosprite[nowNum++] = new CAutoSprite(x, y, autoWidth, autoHeight, dx, dy, &img, winRect, 1);
 	else 
-		autosprite[nowNum++] = new CAvoidSprite(x, y, autoWidth, autoHeight, dx, dy, &imgHeart, winRect,5);
+		autosprite[nowNum++] = new CAvoidSprite(x, y, autoWidth, autoHeight, dx, dy, &imgHeart, winRect, 5);
 		// TODO 如何理解 imgheart 五分的判定过程
 }
 
@@ -98,7 +106,6 @@ void createData(CUsrSprite **usr)
 	*usr = new CUsrSprite(x, y, usrWidth, usrHeight, dx, dy, &imgUsr, winRect);
 
 }
-
 
 void paint()
 {
@@ -135,12 +142,41 @@ void keyEvent(int key, int event)
 			if (usr->collision(autosprite[i]->getRect()))
 			{
 				int s = autosprite[i]->getScore();
-				if (usr)usr->addScore(s);
-				delete(autosprite[i]);
-				autosprite[i] = NULL;
-				usr->grow();
+				if (s == 1)
+				{
+					usr->addScore(s);
+					delete autosprite[i];
+					autosprite[i] = NULL;
+					usr->grow();
+					sound("res/sound/Enemy_Hit.wav", 0);
+				}
+				// else
+				// {
+				// 	usr->addScore(s);
+				// 	delete autosprite[i];
+				// 	autosprite[i] = NULL;
+				// 	createData(autosprite);
+				// }
+				// if (usr)usr->addScore(s);
+				// delete(autosprite[i]);
+				// autosprite[i] = NULL;
+				// usr->grow();
+				// sound("res/sound/Enemy_Hit.wav", 0);
 			}
 		}
 	}
 	paint();
 }
+
+// show time countdown
+// void printCountDownTime(int ID)
+// {
+// 	if (ID == 1){
+
+// 		char txt[10];
+// 		sprintf_s(txt, "%d", counter - ID);
+// 		setTextSize(20);
+// 		paintText(winWidth / 2 - 10, winHeight / 2 - 10, txt);
+// 	}
+// }
+

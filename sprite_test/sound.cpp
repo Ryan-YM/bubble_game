@@ -1,4 +1,4 @@
-#include "sound.h"
+#include "Sound.h"
 
 ACL_Sound BGM, curRegion;
 

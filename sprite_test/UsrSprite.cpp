@@ -66,7 +66,7 @@ void CUsrSprite::move(int key)
 	}
 }
 
-int CUsrSprite::collision(rect r2)
+int CUsrSprite::collision(rect r2)		// 碰撞检测
 {
 	rect r1 = { x,y, width, height };
 	int c = 0;

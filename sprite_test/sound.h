@@ -1,5 +1,5 @@
-#ifndef SOUND_H
-#define SOUND_H
+#ifndef Sound_h
+#define Sound_h
 
 #include "acllib.h"
 
