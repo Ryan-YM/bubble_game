@@ -20,10 +20,11 @@ void createData(CAutoSprite **autoSprite);
 void createData(CUsrSprite **usr);
 void keyEvent(int key, int event);
 void paint();
-// void printCountDownTime(int ID);
+// void beginGame(); 
+void endGame();
 
 int nowNum = 0;
-// int counter = 60;
+
 
 int Setup()
 {
@@ -37,15 +38,17 @@ int Setup()
 	loadImage("diamonds_Small.jpeg", &img);
 	loadImage("abstract-016_Small.jpeg", &imgUsr);
 	loadImage("duck.jpg", &imgHeart);
+	
 	switchBGM(1);
+	// beginGame();
 	//autosprite[nowNum++] = new CAutoSprite(x, y, autoWidth, autoHeight, dx, dy, &img, winRect);
 	createData(autosprite);
 	createData(&usr);	// TODO why &usr? instead of usr
 	usr->setScore(0);
 	registerTimerEvent(timerEvent);
-	// registerTimerEvent(printCountDownTime);
 	registerKeyboardEvent(keyEvent);
 	// TODO 把游戏设计位有限时间内的完成最多得分
+
 	startTimer(0, 40);	// 定时器的时间间隔
 	startTimer(1, 1000);
 
@@ -107,7 +110,7 @@ void createData(CUsrSprite **usr)
 
 }
 
-void paint()
+void paint()	//绘制sprite，创建usr
 {
 	beginPaint();
 	clearDevice();
@@ -131,9 +134,20 @@ void paint()
 	endPaint();
 }
 
-void keyEvent(int key, int event)
+void keyEvent(int key, int event) //响应键盘事件
 {
 	if (event != KEY_DOWN)return;
+	// if (key == KEY_ESC)
+	// {
+	// 	endGame();
+	// }
+	// if (event == KEY_DOWN){
+	// 	if (key == KEY_ENTER){
+	// 		return;
+	// 	}
+	// }
+
+
 	if(usr)usr->move(key);
 	for (int i = 0; i < nowNum; ++i)
 	{
@@ -164,8 +178,14 @@ void keyEvent(int key, int event)
 				// sound("res/sound/Enemy_Hit.wav", 0);
 			}
 		}
+
 	}
 	paint();
+	if (usr->getScore() >= 10)
+	{
+		switchBGM(0);
+		endGame();
+	}
 }
 
 // show time countdown
@@ -180,3 +200,36 @@ void keyEvent(int key, int event)
 // 	}
 // }
 
+void endGame()
+{
+	beginPaint();
+	clearDevice();
+
+	char txt[100];
+	sprintf_s(txt,"Game Over");
+	setTextSize(20);
+	paintText(winWidth / 2 - 10, winHeight / 2 - 10, txt);
+
+	endPaint();
+
+	cancelTimer(0);
+	cancelTimer(1);
+}
+
+// void beginGame()
+// {
+// 	beginPaint();
+// 	clearDevice();
+
+// 	char txt[100];
+// 	sprintf_s(txt,"Game begin");
+// 	setTextSize(20);
+// 	paintText(winWidth / 2 - 10, winHeight / 2 - 10, txt);
+
+// 	do {
+// 		registerKeyboardEvent(keyEvent);
+		
+// 	} while (1);
+
+// 	endPaint();
+// }
