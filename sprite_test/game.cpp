@@ -13,7 +13,7 @@ CAutoSprite *autosprite[maxNum] = { 0 };
 CUsrSprite *usr = NULL;
 int autoWidth = 100, autoHeight = 100;	// auto sprite size
 int usrWidth = 100, usrHeight = 100;
-ACL_Image img,imgUsr,imgHeart;
+ACL_Image img,imgUsr,imgHeart,imgHazard;
 rect winRect;
 void timerEvent(int id);
 void createData(CAutoSprite **autoSprite);
@@ -35,9 +35,10 @@ int Setup()
 	initWindow("BUBBLE GAME", DEFAULT, DEFAULT, winWidth, winHeight);	//初始化窗口 BUBBLE GAME
 	srand((unsigned)time(NULL));	//初始化随机数
 
-	loadImage("diamonds_Small.jpeg", &img);
+	loadImage("diamonds.jpg", &img);
 	loadImage("abstract-016_Small.jpeg", &imgUsr);
-	loadImage("duck.jpg", &imgHeart);
+	loadImage("pic_questions.jpg", &imgHeart);
+	loadImage("biohazard_Small.jpeg", &imgHazard);
 	
 	switchBGM(1);
 	// beginGame();
@@ -89,10 +90,12 @@ void createData(CAutoSprite **autoSprite)
 	int dx = rand() % 5 + 1; //	随机生成x方向的速度
 	int dy = rand() % 5 + 1; //	随机生成y方向的速度
 	int t = rand() % 100;	//	随机生成类型
-	if(t<80)	// 80% 生成1分&img，20% 生成5分&imgHeart
+	if(t<75)	// 80% 生成1分&img，20% 生成5分&imgHeart
 		autosprite[nowNum++] = new CAutoSprite(x, y, autoWidth, autoHeight, dx, dy, &img, winRect, 1);
-	else 
-		autosprite[nowNum++] = new CAvoidSprite(x, y, autoWidth, autoHeight, dx, dy, &imgHeart, winRect, 5);
+	else if (t>85)
+		autosprite[nowNum++] = new CAutoSprite(x, y, autoWidth, autoHeight, dx, dy, &imgHazard, winRect, -1);
+	else
+		autosprite[nowNum++] = new CAvoidSprite(x, y, autoWidth, autoHeight, dx, dy, &imgHeart, winRect, 0);
 		// TODO 如何理解 imgheart 五分的判定过程
 }
 
